@@ -1,0 +1,17 @@
+<!--<h1>Заказы клиента {{ client.name }}</h1>-->
+<h1>Заказы клиента {{ Иван Иванов }}</h1>
+<ul>
+  {% for order in orders %}
+    <li>
+      Заказ #{{ order.id }}, дата: {{ order.order_date }}
+      <ul>
+        {% for product in order.products.all %}
+<!--          <li>{{ product.name }}</li>-->
+	      <li>Заказ сыр</li>
+          <li>Заказ колбаса</li>
+          <li>Заказ молоко</li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endfor %}
+</ul>
