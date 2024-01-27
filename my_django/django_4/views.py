@@ -1,6 +1,12 @@
-from django.shortcuts import render
-from .models import Client, Order, Product
+from . import forms
+from .models import Client, Order
 from datetime import datetime, timedelta
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import ProductForm
+from django.core.files.storage import FileSystemStorage
+from django.shortcuts import render
+from .forms import ImageForm
+from .models import Product
 
 def client_orders(request, client_id):
     client = Client.objects.get(id=client_id)
@@ -30,26 +36,30 @@ def client_products(request, client_id):
     return render(request, 'client_products.html', context)
 
 
-    # products_7_days = [
-    #     {'name': 'сыр', 'added_date': '2024-01-19'},
-    #     {'name': 'колбаса', 'added_date': '2024-01-19'},
-    #     {'name': 'молоко', 'added_date': '2024-01-18'}
-    # ]
-    #
-    # products_30_days = [
-    #     {'name': 'сыр', 'added_date': '2024-01-09'},
-    #     {'name': 'колбаса', 'added_date': '2024-01-09'},
-    #     {'name': 'молоко', 'added_date': '2024-01-01'}
-    # ]
-    # products_365_days = [
-    #     {'name': 'сыр', 'added_date': '2023-09-20'},
-    #     {'name': 'колбаса', 'added_date': '2023-09-20'},
-    #     {'name': 'молоко', 'added_date': '2023-07-19'}
-    # ]
-    # context = {
-    #     'client': client,
-    #     'products_7_days': products_7_days,
-    #     'products_30_days': products_30_days,
-    #     'products_365_days': products_365_days
-    # }
-    # return render(request, 'client_products.html', context)
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_detail', product_id=product_id)
+    else:
+        form = ProductForm(instance=product)
+
+    return render(request, 'edit_product.html', {'form': form})
+
+class ImageForm(forms.Form):
+    image = forms.ImageField()
+
+def upload_image(request):
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.cleaned_data['image']
+            fs = FileSystemStorage()
+            fs.save(image.name, image)
+    else:
+        form = ImageForm()
+
+    return render(request, 'upload_image.html', {'form': form})

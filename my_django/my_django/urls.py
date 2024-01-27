@@ -16,10 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+# from . import views
+# from . import upload_image
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('client-orders/<int:client_id>/', views.client_orders, name='client_orders'),
-    path('client-products/<int:client_id>/', views.client_products, name='client_products'),
+    # path('client-orders/<int:client_id>/', views.client_orders, name='client_orders'),
+    # path('client-products/<int:client_id>/', views.client_products, name='client_products'),
+    # path('product/<int:pk>/edit/', views.product_edit, name='product_edit'),
+    # path('upload/', upload_image, name='upload_image'),
 ]
+
